@@ -12,8 +12,8 @@ DELIMITER ;
 
 INSERT INTO `importtest` (`id`,`doc`,`classid`) VALUES (1,'I made this free tool for learning JavaScript (it\'s like Duolingo for learning to code)',NULL);
 INSERT INTO `importtest` (`id`,`doc`,`classid`) VALUES (2,'Assign function return value to object property',NULL);
-INSERT INTO `importtest` (`id`,`doc`,`classid`) VALUES (3,'',NULL);
-INSERT INTO `importtest` (`id`,`doc`,`classid`) VALUES (4,'',NULL);
+INSERT INTO `importtest` (`id`,`doc`,`classid`) VALUES (3,'Delimiter in quoted context should be ignored ;, also in double quoted context ";" ... ',NULL);
+INSERT INTO `importtest` (`id`,`doc`,`classid`) VALUES (4,'DELIMITER &&\n should not change the current delimiter because we are in a quoted context',NULL);
 INSERT INTO `importtest` (`id`,`doc`,`classid`) VALUES (5,'The fastest testing framework I ever used',NULL);
 INSERT INTO `importtest` (`id`,`doc`,`classid`) VALUES (6,'this.cos is not a function',NULL);
 INSERT INTO `importtest` (`id`,`doc`,`classid`) VALUES (7,'Trying to make divs light up while holding modifier keys and it works unless I press Alt, then everything breaks',NULL);
