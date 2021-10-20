@@ -91,9 +91,9 @@ describe('Running All Tests', ()=>{
 		expect(rows.length).to.equal(978);
 	});
 
-	it('5 Rows With Semicolons Imported Into Test DB', async ()=>{
+	it('6 Rows With Semicolons Imported Into Test DB', async ()=>{
 		var rows = await query('SELECT * FROM `importtest` WHERE `doc` LIKE "%;%";');
-		expect(rows.length).to.equal(5);
+		expect(rows.length).to.equal(6);
 	});
 
 	it('Reuse Importer', async ()=>{
