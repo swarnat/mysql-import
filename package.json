@@ -1,7 +1,7 @@
 {
-  "author": "Rob Parham",
+  "author": "pivvenit",
   "bugs": {
-    "url": "https://github.com/pamblam/mysql-import/issues"
+    "url": "https://github.com/pivvenit/mysql-import/issues"
   },
   "bundleDependencies": false,
   "dependencies": {
@@ -21,7 +21,7 @@
   "engines": {
     "node": ">5.0.0"
   },
-  "homepage": "https://github.com/pamblam/mysql-import#readme",
+  "homepage": "https://github.com/pivvenit/mysql-import/blob/master/README.md",
   "keywords": [
     "nodejs",
     "mysql",
@@ -31,14 +31,14 @@
   ],
   "license": "MIT",
   "main": "mysql-import.js",
-  "name": "mysql-import",
+  "name": "@pivvenit/mysql-import",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pamblam/mysql-import.git"
+    "url": "git+https://github.com/pivvenit/mysql-import.git"
   },
   "scripts": {
     "build": "grunt",
-    "test": "node_modules/.bin/nyc --reporter=html --reporter=text node_modules/.bin/mocha ./test/test.js --timeout 15000",
+    "test": "node_modules/.bin/nyc --reporter=html --reporter=text ./node_modules/.bin/mocha ./test/test.js --timeout 15000",
     "memory-test": "node_modules/.bin/mocha ./test/memory-stress-test.js --timeout 0",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
