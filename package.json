@@ -5,7 +5,7 @@
   },
   "bundleDependencies": false,
   "dependencies": {
-    "mysql": "^2.18.1"
+    "mysql2": "^2.3.3"
   },
   "deprecated": false,
   "description": "Import .sql into a MySQL database with Node.",
