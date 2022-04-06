@@ -18,7 +18,7 @@ jobs:
       mysql:
         image: mysql:latest
         ports:
-          - 3306
+          - 3306:3306
         env:
           MYSQL_USER: user
           MYSQL_PASSWORD: testpassword
@@ -35,10 +35,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Verify MySql connection
-        env:
-          PORT: ${{ job.services.mysql.ports[3306] }}
         run: |
-          while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
+          while ! mysqladmin ping -h"127.0.0.1"  --silent; do
             sleep 1
           done
 
