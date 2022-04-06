@@ -10,7 +10,7 @@ const {errorHandler,query,mysqlConnect,createTestDB,destroyTestDB,closeConnectio
 var config = {
 	host: mysql_host || '127.0.0.1', 
 	user: mysql_user || 'root', 
-	password: mysql_pass || '',
+	password: mysql_pass || 'testrootpassword',
 	database: 'mysql-import-test-db-1'
 };
 
