@@ -20,9 +20,9 @@ jobs:
         ports:
           - 3306:3306
         env:
-          MYSQL_USER: user
+          MYSQL_USER: testuser
           MYSQL_PASSWORD: testpassword
-          MYSQL_DATABASE: mysql-import-test-db-1
+          MYSQL_DATABASE: test
           MYSQL_ROOT_PASSWORD: roottestpassword
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
@@ -41,6 +41,11 @@ jobs:
           done
 
       - name: Build
+        env:
+          - DB_HOST: '127.0.0.1'
+          - DB_USER: 'testuser'
+          - DB_PASSWORD: 'testpassword'
+          - DB_DATABASE: 'test'
         run: |
           npm ci
           npm run test
