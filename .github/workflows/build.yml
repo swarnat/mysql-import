@@ -22,7 +22,7 @@ jobs:
         env:
           MYSQL_USER: testuser
           MYSQL_PASSWORD: testpassword
-          MYSQL_DATABASE: test
+          MYSQL_DATABASE: "mysql-import-test-db-1"
           MYSQL_ROOT_PASSWORD: roottestpassword
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
 
@@ -45,7 +45,7 @@ jobs:
           DB_HOST: '127.0.0.1'
           DB_USER: 'root'
           DB_PASSWORD: 'roottestpassword'
-          DB_DATABASE: 'test'
+          DB_DATABASE: 'mysql-import-test-db-1'
         run: |
           npm ci
           npm run test
