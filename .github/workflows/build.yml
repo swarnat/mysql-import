@@ -42,10 +42,10 @@ jobs:
 
       - name: Build
         env:
-          - DB_HOST: '127.0.0.1'
-          - DB_USER: 'testuser'
-          - DB_PASSWORD: 'testpassword'
-          - DB_DATABASE: 'test'
+          DB_HOST: '127.0.0.1'
+          DB_USER: 'testuser'
+          DB_PASSWORD: 'testpassword'
+          DB_DATABASE: 'test'
         run: |
           npm ci
           npm run test
