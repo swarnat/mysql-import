@@ -198,7 +198,7 @@ describe('Running All Tests', ()=>{
 		expect(typeof error).to.equal("object");
 	});
 
-	it('Test diconnect function.', async ()=>{
+	it('Test disconnect function.', async ()=>{
 		try{
 			importer._conn = false;
 			await importer.disconnect();
