@@ -58,7 +58,7 @@ async function createTestDB(db){
  * @returns {undefined}
  */
 async function destroyTestDB(db){
-	await query("DROP DATABASE `"+db+"`;");
+	await query("DROP DATABASE IF EXISTS `"+db+"`;");
 }
 
 async function closeConnection(){
