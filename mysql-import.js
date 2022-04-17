@@ -238,7 +238,9 @@ class Importer{
 			
 			/* istanbul ignore next */
 			readerStream.on('error', (err)=>{
-				dumpCompletedCB(err);
+				if (dumpCompletedCB) {
+					dumpCompletedCB(err);
+				}
 				reject(err);
 			});
 			
