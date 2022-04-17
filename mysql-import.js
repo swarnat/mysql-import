@@ -216,30 +216,35 @@ class Importer{
 				file_path: fileObj.file,
 				error: err
 			}) : undefined;
+
+			let completedCalled = false;
 			
 			parser.on('finish', ()=>{
 				this._imported.push(fileObj.file);
-				if (dumpCompletedCB) {
+				if (dumpCompletedCB && !completedCalled){
 					dumpCompletedCB(null);
+					completedCalled = true;
 				}
 				resolve();
 			});
 			
 			
 			parser.on('error', (err)=>{
-				if (dumpCompletedCB) {
+				if (dumpCompletedCB && !completedCalled) {
 					dumpCompletedCB(err);
+					completedCalled = true;
 				}
 				reject(err);
 			});
-			
+
 			var readerStream = fs.createReadStream(fileObj.file);
 			readerStream.setEncoding(this._encoding);
 			
 			/* istanbul ignore next */
 			readerStream.on('error', (err)=>{
-				if (dumpCompletedCB) {
+				if (dumpCompletedCB && !completedCalled) {
 					dumpCompletedCB(err);
+					completedCalled = true;
 				}
 				reject(err);
 			});
@@ -560,12 +565,12 @@ class queryParser extends stream.Writable{
 		}
 
 		var query = false;
-		var demiliterFound = false;
+		var delimiterFound = false;
 		if(!this.quoteType && this.buffer.length >= this.delimiter.length){
-			demiliterFound = this.buffer.slice(-this.delimiter.length).join('') === this.delimiter;
+			delimiterFound = this.buffer.slice(-this.delimiter.length).join('') === this.delimiter;
 		}
 
-		if (demiliterFound) {
+		if (delimiterFound) {
 			// trim the delimiter off the end
 			this.buffer.splice(-this.delimiter.length, this.delimiter.length);
 			query = this.buffer.join('').trim();
