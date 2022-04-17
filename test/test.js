@@ -181,6 +181,21 @@ describe('Running All Tests', () => {
         expect(typeof error).to.equal("object");
     });
 
+    it('Calls onDumpCompleted with error object on broken import.', async () => {
+        var fake_sql_file = __dirname + "/broken_dump_files/dump.sql";
+        var fake_sql_file2 = __dirname + "/broken_dump_files/dump_1.sql";
+        var error;
+        const callback = sinon.spy();
+        importer.onDumpCompleted(callback);
+        try {
+            await importer.import(fake_sql_file, fake_sql_file2);
+        } catch (e) {
+            error = e;
+        }
+        expect(typeof error).to.equal("object");
+        expect(callback.calledOnce).to.equal(true);
+    });
+
     it('Test disconnect function.', async () => {
         importer._conn = false;
         await importer.disconnect();
@@ -191,6 +206,10 @@ describe('Running All Tests', () => {
             end: sinon.stub().callsArgWith(0, "Connection closed")
         }
         await expect(importer.disconnect()).to.eventually.be.rejectedWith("Connection closed");
+    });
+
+    it('Test with default progress function.', async () => {
+        await importer.import(testImportFilePath);
     });
 
     it('Test without progress function.', async () => {

@@ -31,8 +31,8 @@ class Importer{
 		this._conn = null;
 		this._encoding = 'utf8';
 		this._imported = [];
-		this._progressCB = ()=>{};
-		this._dumpCompletedCB = ()=>{};
+		this._progressCB = undefined;
+		this._dumpCompletedCB = undefined;
 		this._total_files = 0;
 		this._current_file_no = 0;
 	}
@@ -199,7 +199,7 @@ class Importer{
 			var parser = new queryParser({
 				db_connection: this._conn,
 				encoding: this._encoding,
-				onProgress: (progress) => {
+				onProgress: this._progressCB ? (progress) => {
 					this._progressCB({
 						total_files: this._total_files, 
 						file_no: this._current_file_no, 
@@ -207,25 +207,29 @@ class Importer{
 						total_bytes: fileObj.size,
 						file_path: fileObj.file
 					});
-				}
+				} : undefined
 			});
 			
-			const dumpCompletedCB = (err) => this._dumpCompletedCB({
+			const dumpCompletedCB = this._dumpCompletedCB ? (err) => this._dumpCompletedCB({
 				total_files: this._total_files, 
 				file_no: this._current_file_no, 
 				file_path: fileObj.file,
 				error: err
-			});
+			}) : undefined;
 			
 			parser.on('finish', ()=>{
 				this._imported.push(fileObj.file);
-				dumpCompletedCB(null);
+				if (dumpCompletedCB) {
+					dumpCompletedCB(null);
+				}
 				resolve();
 			});
 			
 			
 			parser.on('error', (err)=>{
-				dumpCompletedCB(err);
+				if (dumpCompletedCB) {
+					dumpCompletedCB(err);
+				}
 				reject(err);
 			});
 			
@@ -333,6 +337,7 @@ class Importer{
 				try{
 					await this._fileExists(filepath);
 					var stat = await this._statFile(filepath);
+					/* istanbul ignore else  */
 					if(stat.isFile()){
 						if(filepath.toLowerCase().substring(filepath.length-4) === '.sql'){
 							full_paths.push({
@@ -409,10 +414,11 @@ class queryParser extends stream.Writable{
 		this.processed_size = 0;
 		
 		// The progress callback
-		this.onProgress = options.onProgress || (() => {});
+		this.onProgress = options.onProgress;
 		
 		// the encoding of the file being read
-		this.encoding = options.encoding || 'utf8';
+		// No default value anymore, since it is always provided by the parent caller.
+		this.encoding = options.encoding;
 		
 		// the encoding of the database connection
 		this.db_connection = options.db_connection;
@@ -462,7 +468,9 @@ class queryParser extends stream.Writable{
 			}
 		}
 		this.processed_size += chunk.length;
-		this.onProgress(this.processed_size);
+		if (this.onProgress) {
+			this.onProgress(this.processed_size);
+		}
 		next(error);
 	}
 	
