@@ -1,0 +1,58 @@
+name: Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+
+    services:
+      mysql:
+        image: mysql:latest
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_USER: testuser
+          MYSQL_PASSWORD: testpassword
+          MYSQL_DATABASE: "mysql-import-test-db-1"
+          MYSQL_ROOT_PASSWORD: roottestpassword
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Verify MySql connection
+        run: |
+          while ! mysqladmin ping -h"127.0.0.1"  --silent; do
+            sleep 1
+          done
+
+      - name: Build
+        env:
+          DB_HOST: '127.0.0.1'
+          DB_USER: 'root'
+          DB_PASSWORD: 'roottestpassword'
+          DB_DATABASE: 'mysql-import-test-db-1'
+        run: |
+          npm ci
+          npm run test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage
+          fail_ci_if_error: true
+          verbose: true

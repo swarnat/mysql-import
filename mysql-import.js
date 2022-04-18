@@ -8,7 +8,7 @@
 
 'use strict';
 
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const fs = require('fs');
 const path = require("path");
 const stream = require('stream');
@@ -31,8 +31,8 @@ class Importer{
 		this._conn = null;
 		this._encoding = 'utf8';
 		this._imported = [];
-		this._progressCB = ()=>{};
-		this._dumpCompletedCB = ()=>{};
+		this._progressCB = undefined;
+		this._dumpCompletedCB = undefined;
 		this._total_files = 0;
 		this._current_file_no = 0;
 	}
@@ -199,7 +199,7 @@ class Importer{
 			var parser = new queryParser({
 				db_connection: this._conn,
 				encoding: this._encoding,
-				onProgress: (progress) => {
+				onProgress: this._progressCB ? (progress) => {
 					this._progressCB({
 						total_files: this._total_files, 
 						file_no: this._current_file_no, 
@@ -207,34 +207,45 @@ class Importer{
 						total_bytes: fileObj.size,
 						file_path: fileObj.file
 					});
-				}
+				} : undefined
 			});
 			
-			const dumpCompletedCB = (err) => this._dumpCompletedCB({
+			const dumpCompletedCB = this._dumpCompletedCB ? (err) => this._dumpCompletedCB({
 				total_files: this._total_files, 
 				file_no: this._current_file_no, 
 				file_path: fileObj.file,
 				error: err
-			});
+			}) : undefined;
+
+			let completedCalled = false;
 			
 			parser.on('finish', ()=>{
 				this._imported.push(fileObj.file);
-				dumpCompletedCB(null);
+				if (dumpCompletedCB && !completedCalled){
+					dumpCompletedCB(null);
+					completedCalled = true;
+				}
 				resolve();
 			});
 			
 			
 			parser.on('error', (err)=>{
-				dumpCompletedCB(err);
+				if (dumpCompletedCB && !completedCalled) {
+					dumpCompletedCB(err);
+					completedCalled = true;
+				}
 				reject(err);
 			});
-			
+
 			var readerStream = fs.createReadStream(fileObj.file);
 			readerStream.setEncoding(this._encoding);
 			
 			/* istanbul ignore next */
 			readerStream.on('error', (err)=>{
-				dumpCompletedCB(err);
+				if (dumpCompletedCB && !completedCalled) {
+					dumpCompletedCB(err);
+					completedCalled = true;
+				}
 				reject(err);
 			});
 			
@@ -333,6 +344,7 @@ class Importer{
 				try{
 					await this._fileExists(filepath);
 					var stat = await this._statFile(filepath);
+					/* istanbul ignore else  */
 					if(stat.isFile()){
 						if(filepath.toLowerCase().substring(filepath.length-4) === '.sql'){
 							full_paths.push({
@@ -409,10 +421,11 @@ class queryParser extends stream.Writable{
 		this.processed_size = 0;
 		
 		// The progress callback
-		this.onProgress = options.onProgress || (() => {});
+		this.onProgress = options.onProgress;
 		
 		// the encoding of the file being read
-		this.encoding = options.encoding || 'utf8';
+		// No default value anymore, since it is always provided by the parent caller.
+		this.encoding = options.encoding;
 		
 		// the encoding of the database connection
 		this.db_connection = options.db_connection;
@@ -462,7 +475,9 @@ class queryParser extends stream.Writable{
 			}
 		}
 		this.processed_size += chunk.length;
-		this.onProgress(this.processed_size);
+		if (this.onProgress) {
+			this.onProgress(this.processed_size);
+		}
 		next(error);
 	}
 	
@@ -550,12 +565,12 @@ class queryParser extends stream.Writable{
 		}
 
 		var query = false;
-		var demiliterFound = false;
+		var delimiterFound = false;
 		if(!this.quoteType && this.buffer.length >= this.delimiter.length){
-			demiliterFound = this.buffer.slice(-this.delimiter.length).join('') === this.delimiter;
+			delimiterFound = this.buffer.slice(-this.delimiter.length).join('') === this.delimiter;
 		}
 
-		if (demiliterFound) {
+		if (delimiterFound) {
 			// trim the delimiter off the end
 			this.buffer.splice(-this.delimiter.length, this.delimiter.length);
 			query = this.buffer.join('').trim();
