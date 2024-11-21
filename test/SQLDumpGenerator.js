@@ -1,6 +1,6 @@
 
-const crypto = require("crypto");
-const fs = require('fs');
+import crypto from 'crypto';
+import fs from 'fs';
 
 
 class SQLDumpGenerator{
@@ -66,7 +66,7 @@ class SQLDumpGenerator{
 
 }
 
-module.exports = SQLDumpGenerator;
+export default SQLDumpGenerator;
 
 //(async function main(){
 //	const generator = new SQLDumpGenerator(2.5 * 1e+9, 'large_dump.sql');

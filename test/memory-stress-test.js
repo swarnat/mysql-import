@@ -9,10 +9,10 @@ const mysql_host = '';
 const mysql_user = '';
 const mysql_pass = '';
 
-const fs = require('fs');
-const expect = require('chai').expect;
-const path = require('path');
-const {errorHandler,query,mysqlConnect,createTestDB,destroyTestDB,closeConnection} = require('./test-helpers.js');
+import fs from 'fs';
+import { expect } from 'chai';
+import path from 'path';
+import {errorHandler,query,mysqlConnect,createTestDB,destroyTestDB,closeConnection} from './test-helpers.js';
 
 var config = {
 	host: mysql_host || '127.0.0.1', 
@@ -21,10 +21,10 @@ var config = {
 	database: 'mysql-import-test-db-1'
 };
 
-mysqlConnect(config);
+await mysqlConnect(config);
 
-const MySQLImport = require('../mysql-import.js');
-const SQLDumpGenerator = require('./SQLDumpGenerator.js');
+import MySQLImport from '../mysql-import.js';
+import SQLDumpGenerator from './SQLDumpGenerator.js';
 const importer = new MySQLImport(config);
 
 const start_time = new Date();

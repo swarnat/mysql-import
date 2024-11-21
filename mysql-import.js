@@ -8,10 +8,10 @@
 
 'use strict';
 
-const mysql = require('mysql2');
-const fs = require('fs');
-const path = require("path");
-const stream = require('stream');
+import mysql from 'mysql2';
+import fs from 'fs';
+import path from 'path';
+import stream from 'stream';
 
 
 /**
@@ -383,7 +383,7 @@ class Importer{
  */
 Importer.version = '5.0.23';
 
-module.exports = Importer;
+export default Importer;
 
 /**
  * Execute the loopBody function once for each item in the items array, 

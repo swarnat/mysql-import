@@ -1,7 +1,9 @@
-const chai = require('chai');
-const {errorHandler, query, mysqlConnect, createTestDB, destroyTestDB, closeConnection} = require('./test-helpers.js');
-const sinon = require("sinon");
-const chaiAsPromised = require("chai-as-promised");
+import * as chai from 'chai';
+import {errorHandler, query, mysqlConnect, createTestDB, destroyTestDB, closeConnection} from './test-helpers.js';
+import sinon from "sinon";
+import chaiAsPromised from "chai-as-promised";
+import { fileURLToPath } from 'url';
+import MySQLImport from '../mysql-import.js';
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -13,19 +15,16 @@ var config = {
     database: process.env.DB_DATABASE
 };
 
-var fs, MySQLImport, importer;
+const testImportFilePath = fileURLToPath(new URL('./sample_dump_files/test.sql', import.meta.url));
 
-const testImportFilePath = __dirname + '/sample_dump_files/test.sql';
+let importer;
 
 describe('Running All Tests', () => {
 
     beforeEach(async function () {
         await mysqlConnect(config);
 
-        fs = require('fs');
-        MySQLImport = require('../mysql-import.js');
         importer = new MySQLImport(config);
-
         importer.setEncoding('utf8');
 
         await createTestDB('mysql-import-test-db-1');
@@ -59,14 +58,14 @@ describe('Running All Tests', () => {
 
     it('Reuse Importer', async () => {
         await importer.import(testImportFilePath);
-        await importer.import(__dirname + '/sample_dump_files/test2.sql');
+        await importer.import(fileURLToPath(new URL('./sample_dump_files/test2.sql', import.meta.url)));
         var tables = await query("SHOW TABLES;");
         expect(tables.length).to.equal(3);
     });
 
     it('5 Rows Inserted in 2nd Table', async () => {
         await importer.import(testImportFilePath);
-        await importer.import(__dirname + '/sample_dump_files/test2.sql');
+        await importer.import(fileURLToPath(new URL('./sample_dump_files/test2.sql', import.meta.url)));
         const rows = await query("SELECT * FROM `test_table_2`;");
         expect(rows.length).to.equal(5);
     });
@@ -74,9 +73,9 @@ describe('Running All Tests', () => {
     it('Import Array, Directory', async () => {
         await importer.import(
             testImportFilePath,
-            __dirname + '/sample_dump_files/test2.sql',
-            __dirname + '/sample_dump_files/test3.sql',
-            __dirname + '/sample_dump_files/more_sample_files/'
+            fileURLToPath(new URL('./sample_dump_files/test2.sql', import.meta.url)),
+            fileURLToPath(new URL('./sample_dump_files/test3.sql', import.meta.url)),
+            fileURLToPath(new URL('./sample_dump_files/more_sample_files/', import.meta.url))
         );
         const tables = await query("SHOW TABLES;");
         expect(tables.length).to.equal(6);
@@ -86,7 +85,7 @@ describe('Running All Tests', () => {
         await createTestDB('mysql-import-test-db-2');
         await query("USE `mysql-import-test-db-2`;");
         importer.use('mysql-import-test-db-2');
-        await importer.import(__dirname + '/sample_dump_files/');
+        await importer.import(fileURLToPath(new URL('./sample_dump_files/', import.meta.url)));
         const tables = await query("SHOW TABLES;");
         expect(tables.length).to.equal(6);
     });
@@ -94,16 +93,16 @@ describe('Running All Tests', () => {
     it('Test imported', async () => {
         await importer.import(
             testImportFilePath,
-            __dirname + '/sample_dump_files/test2.sql',
-            __dirname + '/sample_dump_files/test3.sql',
-            __dirname + '/sample_dump_files/more_sample_files/'
+            fileURLToPath(new URL('./sample_dump_files/test2.sql', import.meta.url)),
+            fileURLToPath(new URL('./sample_dump_files/test3.sql', import.meta.url)),
+            fileURLToPath(new URL('./sample_dump_files/more_sample_files/', import.meta.url))
         );
         const files = importer.getImported();
         expect(files.length).to.equal(5);
     });
 
     it('Test imported function', async () => {
-        await importer.import(__dirname + '/sample_dump_files/test4.sql');
+        await importer.import(fileURLToPath(new URL('./sample_dump_files/test4.sql', import.meta.url)));
         const funcs = await query("SHOW FUNCTION STATUS LIKE 'testfunc';");
         expect(funcs.length).to.equal(1);
     });
@@ -159,7 +158,7 @@ describe('Running All Tests', () => {
     });
 
     it('Test fake sql file.', async () => {
-        var fake_sql_file = __dirname + "/sample_dump_files/more_sample_files/not_sql.txt";
+        var fake_sql_file = fileURLToPath(new URL('./sample_dump_files/more_sample_files/not_sql.txt', import.meta.url));
         var error;
         try {
             await importer.importSingleFile(fake_sql_file);
@@ -170,8 +169,8 @@ describe('Running All Tests', () => {
     });
 
     it('Test importing broken file.', async () => {
-        var fake_sql_file = __dirname + "/broken_dump_files/dump.sql";
-        var fake_sql_file2 = __dirname + "/broken_dump_files/dump_1.sql";
+        var fake_sql_file = fileURLToPath(new URL('./broken_dump_files/dump.sql', import.meta.url));
+        var fake_sql_file2 = fileURLToPath(new URL('./broken_dump_files/dump_1.sql', import.meta.url));
         var error;
         try {
             await importer.import(fake_sql_file, fake_sql_file2);
@@ -182,8 +181,8 @@ describe('Running All Tests', () => {
     });
 
     it('Calls onDumpCompleted with error object on broken import.', async () => {
-        var fake_sql_file = __dirname + "/broken_dump_files/dump.sql";
-        var fake_sql_file2 = __dirname + "/broken_dump_files/dump_1.sql";
+        var fake_sql_file = fileURLToPath(new URL('./broken_dump_files/dump.sql', import.meta.url));
+        var fake_sql_file2 = fileURLToPath(new URL('./broken_dump_files/dump_1.sql', import.meta.url));
         var error;
         const callback = sinon.spy();
         importer.onDumpCompleted(callback);
@@ -274,7 +273,7 @@ describe('Running All Tests', () => {
     it('Testing path parser.', async () => {
         var error;
         try {
-            await importer._getSQLFilePaths('!@#$', '$%^#^', __dirname + "/broken_dump_files");
+            await importer._getSQLFilePaths('!@#$', '$%^#^', fileURLToPath(new URL('./broken_dump_files', import.meta.url)));
         } catch (e) {
             error = e;
         }
