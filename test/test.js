@@ -15,7 +15,7 @@ var config = {
     database: process.env.DB_DATABASE
 };
 
-const testImportFilePath = fileURLToPath + '/sample_dump_files/test.sql';
+const testImportFilePath = fileURLToPath(new URL('./sample_dump_files/test.sql', import.meta.url));
 
 let importer;
 
