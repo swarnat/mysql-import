@@ -14,8 +14,6 @@ var config = {
     database: process.env.DB_DATABASE
 };
 
-var fs, MySQLImport, importer;
-
 const testImportFilePath = fileURLToPath + '/sample_dump_files/test.sql';
 
 describe('Running All Tests', () => {
@@ -23,10 +21,8 @@ describe('Running All Tests', () => {
     beforeEach(async function () {
         await mysqlConnect(config);
 
-        fs = require('fs');
-        MySQLImport = require('../mysql-import.js');
-        importer = new MySQLImport(config);
-
+        import MySQLImport from '../mysql-import.js';
+        const importer = new MySQLImport(config);
         importer.setEncoding('utf8');
 
         await createTestDB('mysql-import-test-db-1');
