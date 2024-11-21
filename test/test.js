@@ -65,7 +65,7 @@ describe('Running All Tests', () => {
 
     it('5 Rows Inserted in 2nd Table', async () => {
         await importer.import(testImportFilePath);
-        await importer.import(__dirname + '/sample_dump_files/test2.sql');
+        await importer.import(fileURLToPath(new URL('./sample_dump_files/test2.sql', import.meta.url)));
         const rows = await query("SELECT * FROM `test_table_2`;");
         expect(rows.length).to.equal(5);
     });
@@ -93,16 +93,16 @@ describe('Running All Tests', () => {
     it('Test imported', async () => {
         await importer.import(
             testImportFilePath,
-            __dirname + '/sample_dump_files/test2.sql',
-            __dirname + '/sample_dump_files/test3.sql',
-            __dirname + '/sample_dump_files/more_sample_files/'
+            fileURLToPath(new URL('./sample_dump_files/test2.sql', import.meta.url)),
+            fileURLToPath(new URL('./sample_dump_files/test3.sql', import.meta.url)),
+            fileURLToPath(new URL('./sample_dump_files/more_sample_files/', import.meta.url))
         );
         const files = importer.getImported();
         expect(files.length).to.equal(5);
     });
 
     it('Test imported function', async () => {
-        await importer.import(__dirname + '/sample_dump_files/test4.sql');
+        await importer.import(fileURLToPath(new URL('./sample_dump_files/test4.sql', import.meta.url)));
         const funcs = await query("SHOW FUNCTION STATUS LIKE 'testfunc';");
         expect(funcs.length).to.equal(1);
     });
@@ -181,8 +181,8 @@ describe('Running All Tests', () => {
     });
 
     it('Calls onDumpCompleted with error object on broken import.', async () => {
-        var fake_sql_file = __dirname + "/broken_dump_files/dump.sql";
-        var fake_sql_file2 = __dirname + "/broken_dump_files/dump_1.sql";
+        var fake_sql_file = fileURLToPath(new URL('./broken_dump_files/dump.sql', import.meta.url));
+        var fake_sql_file2 = fileURLToPath(new URL('./broken_dump_files/dump_1.sql', import.meta.url));
         var error;
         const callback = sinon.spy();
         importer.onDumpCompleted(callback);
