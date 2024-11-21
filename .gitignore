@@ -5,3 +5,5 @@
 /.nyc_output/
 /test/large_dump.sql
 .idea
+.aider*
+.env

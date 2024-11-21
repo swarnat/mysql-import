@@ -1,7 +1,8 @@
-const chai = require('chai');
-const {errorHandler, query, mysqlConnect, createTestDB, destroyTestDB, closeConnection} = require('./test-helpers.js');
-const sinon = require("sinon");
-const chaiAsPromised = require("chai-as-promised");
+import * as chai from 'chai';
+import {errorHandler, query, mysqlConnect, createTestDB, destroyTestDB, closeConnection} from './test-helpers.js';
+import sinon from "sinon";
+import chaiAsPromised from "chai-as-promised";
+import { fileURLToPath } from 'url';
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -15,7 +16,7 @@ var config = {
 
 var fs, MySQLImport, importer;
 
-const testImportFilePath = __dirname + '/sample_dump_files/test.sql';
+const testImportFilePath = fileURLToPath + '/sample_dump_files/test.sql';
 
 describe('Running All Tests', () => {
 

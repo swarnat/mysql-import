@@ -1,4 +1,4 @@
-const mysql = require('mysql2');
+import mysql from 'mysql2';
 
 var con;
 var log_bin_trust_function_creators;
@@ -8,7 +8,7 @@ var log_bin_trust_function_creators;
  * @param {Error} err
  * @returns {undefined}
  */
-function errorHandler(err){
+export function errorHandler(err){
 	console.log("\n\nsomething went wrong: ", err.message);
 	console.error(err);
 	process.exit(1);
@@ -19,7 +19,7 @@ function errorHandler(err){
  * @param {type} sql
  * @returns {Promise}
  */
-function query(sql){ 
+export function query(sql){
 	return new Promise(done=>{
 		con.query(sql, (err, result)=>{
 			if(err) errorHandler(err);
@@ -33,7 +33,7 @@ function query(sql){
  * @param {config object} config
  * @returns {Connection}
  */
-async function mysqlConnect(config){
+export async function mysqlConnect(config){
 	con = mysql.createConnection({
 		host: config.host, 
 		user: config.user, 
@@ -48,7 +48,7 @@ async function mysqlConnect(config){
  * Create a database to test with
  * @returns {undefined}
  */
-async function createTestDB(db){
+export async function createTestDB(db){
 	await query("DROP DATABASE IF EXISTS `"+db+"`;");
 	await query("CREATE DATABASE `"+db+"`;");
 }
@@ -57,20 +57,11 @@ async function createTestDB(db){
  * Destroy the testing DB
  * @returns {undefined}
  */
-async function destroyTestDB(db){
+export async function destroyTestDB(db){
 	await query("DROP DATABASE IF EXISTS `"+db+"`;");
 }
 
-async function closeConnection(){
+export async function closeConnection(){
 	await query("SET GLOBAL log_bin_trust_function_creators = '"+log_bin_trust_function_creators+"';");
 	con.end();
 }
-
-module.exports = {
-	errorHandler, 
-	query, 
-	mysqlConnect,
-	createTestDB, 
-	destroyTestDB,
-	closeConnection
-};
