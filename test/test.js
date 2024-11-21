@@ -58,7 +58,7 @@ describe('Running All Tests', () => {
 
     it('Reuse Importer', async () => {
         await importer.import(testImportFilePath);
-        await importer.import(__dirname + '/sample_dump_files/test2.sql');
+        await importer.import(fileURLToPath(new URL('./sample_dump_files/test2.sql', import.meta.url)));
         var tables = await query("SHOW TABLES;");
         expect(tables.length).to.equal(3);
     });
@@ -73,9 +73,9 @@ describe('Running All Tests', () => {
     it('Import Array, Directory', async () => {
         await importer.import(
             testImportFilePath,
-            __dirname + '/sample_dump_files/test2.sql',
-            __dirname + '/sample_dump_files/test3.sql',
-            __dirname + '/sample_dump_files/more_sample_files/'
+            fileURLToPath(new URL('./sample_dump_files/test2.sql', import.meta.url)),
+            fileURLToPath(new URL('./sample_dump_files/test3.sql', import.meta.url)),
+            fileURLToPath(new URL('./sample_dump_files/more_sample_files/', import.meta.url))
         );
         const tables = await query("SHOW TABLES;");
         expect(tables.length).to.equal(6);
@@ -85,7 +85,7 @@ describe('Running All Tests', () => {
         await createTestDB('mysql-import-test-db-2');
         await query("USE `mysql-import-test-db-2`;");
         importer.use('mysql-import-test-db-2');
-        await importer.import(__dirname + '/sample_dump_files/');
+        await importer.import(fileURLToPath(new URL('./sample_dump_files/', import.meta.url)));
         const tables = await query("SHOW TABLES;");
         expect(tables.length).to.equal(6);
     });
@@ -158,7 +158,7 @@ describe('Running All Tests', () => {
     });
 
     it('Test fake sql file.', async () => {
-        var fake_sql_file = __dirname + "/sample_dump_files/more_sample_files/not_sql.txt";
+        var fake_sql_file = fileURLToPath(new URL('./sample_dump_files/more_sample_files/not_sql.txt', import.meta.url));
         var error;
         try {
             await importer.importSingleFile(fake_sql_file);
@@ -169,8 +169,8 @@ describe('Running All Tests', () => {
     });
 
     it('Test importing broken file.', async () => {
-        var fake_sql_file = __dirname + "/broken_dump_files/dump.sql";
-        var fake_sql_file2 = __dirname + "/broken_dump_files/dump_1.sql";
+        var fake_sql_file = fileURLToPath(new URL('./broken_dump_files/dump.sql', import.meta.url));
+        var fake_sql_file2 = fileURLToPath(new URL('./broken_dump_files/dump_1.sql', import.meta.url));
         var error;
         try {
             await importer.import(fake_sql_file, fake_sql_file2);
@@ -273,7 +273,7 @@ describe('Running All Tests', () => {
     it('Testing path parser.', async () => {
         var error;
         try {
-            await importer._getSQLFilePaths('!@#$', '$%^#^', __dirname + "/broken_dump_files");
+            await importer._getSQLFilePaths('!@#$', '$%^#^', fileURLToPath(new URL('./broken_dump_files', import.meta.url)));
         } catch (e) {
             error = e;
         }
