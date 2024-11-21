@@ -17,12 +17,14 @@ var config = {
 
 const testImportFilePath = fileURLToPath + '/sample_dump_files/test.sql';
 
+let importer;
+
 describe('Running All Tests', () => {
 
     beforeEach(async function () {
         await mysqlConnect(config);
 
-        const importer = new MySQLImport(config);
+        importer = new MySQLImport(config);
         importer.setEncoding('utf8');
 
         await createTestDB('mysql-import-test-db-1');
