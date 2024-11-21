@@ -3,6 +3,7 @@ import {errorHandler, query, mysqlConnect, createTestDB, destroyTestDB, closeCon
 import sinon from "sinon";
 import chaiAsPromised from "chai-as-promised";
 import { fileURLToPath } from 'url';
+import MySQLImport from '../mysql-import.js';
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -21,7 +22,6 @@ describe('Running All Tests', () => {
     beforeEach(async function () {
         await mysqlConnect(config);
 
-        import MySQLImport from '../mysql-import.js';
         const importer = new MySQLImport(config);
         importer.setEncoding('utf8');
 
