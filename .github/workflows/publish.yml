@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
     branches:
       - master
-    release:
-      types: [ created ]
+  release:
+    types: [ created ]
 
 jobs:
   build:
