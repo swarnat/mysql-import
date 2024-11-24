@@ -2,8 +2,6 @@ name: Publish
 
 on:
   workflow_dispatch:
-    branches:
-      - master
   release:
     types: [ created ]
 
@@ -12,8 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "23"
       - uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.NPM_TOKEN }}
           access: public
-          check-version: true
