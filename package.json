@@ -43,5 +43,9 @@
     "build": "grunt",
     "test": "node_modules/.bin/nyc --reporter=html --reporter=text --reporter=lcov ./node_modules/.bin/mocha ./test/test.js --timeout 15000 --exit",
     "memory-test": "node_modules/.bin/mocha ./test/memory-stress-test.js --timeout 0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
