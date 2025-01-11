@@ -2,7 +2,7 @@
   "author": "pivvenit",
   "version": "7.0.3",
   "bugs": {
-    "url": "https://github.com/pivvenit/mysql-import/issues"
+    "url": "https://github.com/swarnat/mysql-import/issues"
   },
   "bundleDependencies": [],
   "dependencies": {
@@ -24,7 +24,7 @@
     "node": ">10.0.0"
   },
   "type": "module",
-  "homepage": "https://github.com/pivvenit/mysql-import/blob/master/README.md",
+  "homepage": "https://github.com/swarnat/mysql-import/blob/master/README.md",
   "keywords": [
     "nodejs",
     "mysql",
@@ -37,7 +37,7 @@
   "name": "@swarnat/mysql-import",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pivvenit/mysql-import.git"
+    "url": "git+https://github.com/swarnat/mysql-import.git"
   },
   "scripts": {
     "build": "grunt",
