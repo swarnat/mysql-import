@@ -34,7 +34,7 @@
   ],
   "license": "MIT",
   "main": "mysql-import.js",
-  "name": "swarnat/mysql-import",
+  "name": "@swarnat/mysql-import",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pivvenit/mysql-import.git"
